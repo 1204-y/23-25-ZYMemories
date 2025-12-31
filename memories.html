@@ -1,0 +1,1412 @@
+
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>我们的回忆</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Lato:wght@300;400;700;900&family=Noto+Sans+SC:wght@300;400;700;900&display=swap');
+
+            :root {
+                --glass: rgba(255, 255, 255, 0.15);
+            }
+
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Lato', 'Noto Sans SC', sans-serif; overflow-x: hidden; background: #000; color: #fff; }
+
+            .container {
+                height: 100vh;
+                overflow-y: scroll;
+                scroll-snap-type: y mandatory;
+                scroll-behavior: smooth;
+            }
+
+            .section {
+                height: 100vh;
+                width: 100%;
+                scroll-snap-align: start;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* === 标题样式 === */
+            .section-header {
+                position: absolute; top: 10%; width: 100%; text-align: center; z-index: 20;
+                font-family: 'Noto Serif SC'; font-size: 2.2rem; font-weight: 700;
+                letter-spacing: 2px;
+            }
+            .section-header.light { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+            .section-header.dark { color: #333; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            .section-sub { font-size: 0.8rem; letter-spacing: 4px; opacity: 0.7; margin-bottom: 5px; text-transform: uppercase; font-family: sans-serif; }
+
+            /* === 首页 === */
+            .bg-aurora {
+                background: linear-gradient(125deg, #000000 0%, #1a0b2e 30%, #2b1055 60%, #000000 100%);
+                background-size: 400% 400%;
+                animation: auroraFlow 15s ease infinite;
+            }
+            @keyframes auroraFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+            #opening-stage { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; overflow: hidden; }
+            .op-bubble { position: absolute; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 5px 15px; font-size: 0.8rem; color: rgba(255,255,255,0.7); white-space: nowrap; top: 110%; opacity: 0; }
+            .op-bubble.surge { animation: surgeUp linear forwards; }
+            @keyframes surgeUp { 0% { top: 110%; opacity: 0; transform: translateX(0); } 20% { opacity: 0.8; } 100% { top: 10%; opacity: 0; transform: translateX(var(--sway)); } }
+
+            #core-glow { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: white; border-radius: 50%; transform: translate(-50%, -50%) scale(0); box-shadow: 0 0 50px 20px rgba(255,255,255,0.8); opacity: 0; z-index: 40; transition: all 0.5s ease-in; }
+            #core-glow.active { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+            #cover-content { transform: scale(0); opacity: 0; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease; z-index: 60; text-align: center; }
+            #cover-content.explode { transform: scale(1); opacity: 1; }
+
+            .cover-title { font-family: 'Noto Serif SC'; font-size: 3.5rem; font-weight: 700; margin-bottom: 10px; background: linear-gradient(to right, #fff, #a8c0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+            .cover-num { font-size: 4rem; font-weight: 900; line-height: 1; margin: 20px 0; text-shadow: 0 0 30px rgba(255,255,255,0.5); }
+
+            /* === 四季核心 === */
+            .halo-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 10; pointer-events: none; }
+            .halo-content { text-align: center; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+            .season-sub { font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; opacity: 0.9; margin-bottom: 15px; font-weight: bold; }
+            .season-title { font-family: 'Noto Serif SC'; font-size: 3rem; margin-bottom: 5px; font-weight: 700; }
+            .season-count { font-family: 'Noto Serif SC'; font-size: 4.5rem; font-weight: 700; line-height: 1; margin: 10px 0; }
+            .season-desc { font-size: 0.9rem; opacity: 1; line-height: 1.6; margin-top: 15px; font-weight: 400; }
+
+            .bg-spring { background: linear-gradient(180deg, #a8edea 0%, #fed6e3 100%); }
+            .bg-spring .season-title, .bg-spring .season-count { color: #2d5a58; text-shadow: 0 2px 10px rgba(255,255,255,0.5); }
+            .bg-summer { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
+            .bg-autumn { background: linear-gradient(180deg, #e6b980 0%, #eacda3 100%); }
+            .bg-autumn .season-title, .bg-autumn .season-count { color: #5d4037; text-shadow: 0 2px 10px rgba(255,255,255,0.4); }
+            .bg-winter { background: linear-gradient(to bottom, #dfe9f3 0%, #ffffff 100%); }
+            .bg-winter .season-title, .bg-winter .season-count { color: #34495e; text-shadow: 0 2px 10px rgba(255,255,255,0.6); }
+
+            .spring-layer, .summer-layer, .autumn-layer, .winter-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+            .bubble-spring { position: absolute; background: rgba(255, 255, 255, 0.4); border-radius: 50%; padding: 8px 12px; color: rgba(30, 60, 60, 0.8); font-size: 0.8rem; white-space: nowrap; bottom: -10%; animation: springRise var(--dur) linear infinite; animation-delay: var(--del); left: var(--l); }
+            @keyframes springRise { 0% { bottom: -10%; transform: translateX(0) scale(0.8); opacity: 0; } 20% { opacity: 0.8; } 50% { transform: translateX(20px) scale(1); } 100% { bottom: 110%; transform: translateX(-20px) scale(1.1); opacity: 0; } }
+            .bubble-summer { position: absolute; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); padding: 4px 20px; color: rgba(255, 255, 255, 1); font-size: 0.7rem; white-space: nowrap; top: var(--t); left: -20%; filter: blur(0.5px); transform: scaleX(1.5); animation: summerRush var(--dur) ease-in-out infinite; animation-delay: var(--del); }
+            @keyframes summerRush { 0% { left: -50%; opacity: 0; } 10% { opacity: 1; } 100% { left: 120%; opacity: 0; } }
+            .bubble-autumn { position: absolute; background: rgba(255, 248, 220, 0.7); padding: 10px 8px; width: 100px; font-size: 0.7rem; color: #8b5a2b; text-align: center; border-radius: 2px 15px 2px 15px; top: -15%; left: var(--l); animation: autumnFall var(--dur) linear infinite; animation-delay: var(--del); }
+            @keyframes autumnFall { 0% { top: -15%; transform: rotate(0deg) translateX(0); opacity: 0; } 20% { opacity: 1; } 100% { top: 110%; transform: rotate(var(--rot)) translateX(50px); opacity: 0; } }
+            .bubble-winter { position: absolute; background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255, 255, 255, 0.8); padding: 6px 10px; color: #5f7d95; font-size: 0.75rem; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); top: var(--t); left: var(--l); animation: winterBreathe var(--dur) ease-in-out infinite alternate; animation-delay: var(--del); }
+            @keyframes winterBreathe { 0% { transform: scale(1) translateY(0); opacity: 0.5; } 100% { transform: scale(1.05) translateY(-10px); opacity: 0.9; } }
+
+            /* === 最晚的一天 === */
+            .bg-lullaby { background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e); position: relative; }
+            .pendulum-wrapper { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 2px; height: 60vh; transform-origin: 50% 0; animation: pendulumSwing 8s ease-in-out infinite alternate; z-index: 10; }
+            @keyframes pendulumSwing { from { transform: translateX(-50%) rotate(-15deg); } to { transform: translateX(-50%) rotate(15deg); } }
+            .silver-string { width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8), rgba(255,255,255,0.2)); margin: 0 auto; }
+            .crescent-moon-pendulum { position: absolute; bottom: -40px; left: -40px; width: 80px; height: 80px; border-radius: 50%; box-shadow: -15px 15px 0 0 #fdf6e3; filter: drop-shadow(0 0 15px rgba(255, 255, 230, 0.6)); transform: rotate(-45deg); }
+            .moon-beam { position: absolute; top: 100%; left: 50%; width: 600px; height: 800px; background: radial-gradient(ellipse at top, rgba(255,255,255,0.08) 0%, transparent 70%); transform: translateX(-50%); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); pointer-events: none; }
+            .clouds-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+            .cloud-puff { position: absolute; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); filter: blur(20px); border-radius: 50%; animation: cloudFloat 20s linear infinite; }
+            @keyframes cloudFloat { 0% { transform: translateX(-10%); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateX(110%); opacity: 0; } }
+            .fireflies-layer { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; z-index: 6; pointer-events: none; }
+            .firefly { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; box-shadow: 0 0 5px #fff; opacity: 0; animation: flyUp var(--dur) ease-in infinite; animation-delay: var(--del); left: var(--l); bottom: 0; }
+            @keyframes flyUp { 0% { bottom: 0; opacity: 0; transform: translateX(0); } 30% { opacity: 0.8; } 100% { bottom: 80%; opacity: 0; transform: translateX(20px); } }
+            .lullaby-data { position: absolute; bottom: 10%; width: 100%; text-align: center; z-index: 20; }
+            .lullaby-time { font-family: 'Noto Serif SC'; font-size: 5rem; font-weight: 700; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.4); line-height: 1; }
+            .lullaby-date { font-size: 1.2rem; letter-spacing: 2px; opacity: 0.7; margin-top: 10px; }
+            .lullaby-chat-container { position: absolute; bottom: 25%; width: 90%; height: 40%; z-index: 25; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; mask-image: linear-gradient(to bottom, transparent, black 30%); -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%); }
+            .l-msg { max-width: 85%; padding: 10px 14px; margin-bottom: 10px; font-size: 0.85rem; line-height: 1.4; border-radius: 16px; backdrop-filter: blur(8px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); animation: slideUp 0.8s ease-out forwards; opacity: 0; }
+            .l-msg.me { align-self: flex-end; background: rgba(100, 180, 255, 0.2); border: 1px solid rgba(100, 180, 255, 0.3); border-bottom-right-radius: 2px; color: rgba(255,255,255,0.95); text-align: right; }
+            .l-msg.other { align-self: flex-start; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); border-bottom-left-radius: 2px; color: rgba(255,255,255,0.9); text-align: left; }
+            .l-time { display: block; font-size: 0.6rem; opacity: 0.6; margin-bottom: 2px; }
+            @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+            /* === 日升月落 (V40: 修复布局 Flexbox) === */
+            .bg-routine-v35 {
+                background: linear-gradient(180deg, #ff9a9e 0%, #a18cd1 50%, #2a2a72 100%);
+                position: relative;
+                display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; /* 关键修复：Flexbox 均匀分布 */
+                height: 100vh;
+            }
+            .noise-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.1"/%3E%3C/svg%3E'); pointer-events: none; z-index: 2; opacity: 0.5; mix-blend-mode: overlay; }
+
+            .routine-block { text-align: center; z-index: 5; margin: 0; } /* 移除margin */
+            .sun-glow { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, #ffd700, #ff8c00); box-shadow: 0 0 40px #ff8c00, 0 0 80px rgba(255, 140, 0, 0.4); margin: 0 auto 10px auto; animation: sunBreathe 4s ease-in-out infinite alternate; }
+            @keyframes sunBreathe { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.1); opacity: 1; } }
+            .moon-glow { width: 60px; height: 60px; border-radius: 50%; box-shadow: -15px 10px 0 0 #fdf6e3; filter: drop-shadow(0 0 20px rgba(255, 255, 220, 0.5)); margin: 10px auto 0 auto; transform: rotate(-30deg); animation: moonFloat 5s ease-in-out infinite alternate; }
+            @keyframes moonFloat { from { transform: rotate(-30deg) translateY(0); } to { transform: rotate(-30deg) translateY(-10px); } }
+
+            .light-beam-container { width: 100%; position: relative; display: flex; justify-content: center; align-items: center; height: 200px; /* 给光柱一个基础高度 */ }
+            .light-beam { width: 60px; height: 100%; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.05) 60%, transparent 100%); filter: blur(5px); }
+            .beam-capsule { position: absolute; padding: 8px 16px; border-radius: 30px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.25); font-size: 0.8rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); white-space: nowrap; }
+
+            .routine-time { font-family: 'Noto Serif SC'; font-size: 4rem; font-weight: 700; line-height: 1; margin: 5px 0; }
+            .routine-label { font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; }
+
+            /* === 角色分工 (Soul Gravity) === */
+            .bg-roles-v37 {
+                background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+                position: relative; overflow: hidden;
+                color: #fff;
+            }
+            .noise-overlay-roles {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.08"/%3E%3C/svg%3E');
+                pointer-events: none; z-index: 2; opacity: 0.6;
+            }
+            .nebula-container {
+                position: absolute; width: 100%; height: 100%;
+                display: flex; justify-content: center; align-items: center;
+                z-index: 5; pointer-events: none;
+                mix-blend-mode: screen; 
+            }
+            .nebula-orb {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(50px);
+                opacity: 0.8;
+                animation: soulDrift 10s ease-in-out infinite alternate;
+            }
+            .nebula-cyan {
+                width: 320px; height: 320px;
+                background: radial-gradient(circle, #00f2ff, #0051ff);
+                top: 30%; left: 50%;
+                transform: translate(-80%, -20%);
+                margin-left: -50px; 
+            }
+            .nebula-crimson {
+                width: 350px; height: 350px;
+                background: radial-gradient(circle, #ffaa00, #ff0055);
+                top: 45%; left: 50%;
+                transform: translate(-20%, 10%);
+                margin-left: 20px;
+                animation-delay: -3s;
+            }
+            @keyframes soulDrift {
+                0% { transform: translate(-70%, -20%) scale(1); }
+                50% { transform: translate(-40%, 0%) scale(1.1); }
+                100% { transform: translate(-60%, 10%) scale(0.95); }
+            }
+            .soul-content-layer {
+                position: relative; z-index: 10;
+                width: 100%; height: 100%;
+                display: flex; flex-direction: column; justify-content: center;
+            }
+            .soul-row {
+                display: flex; justify-content: space-around; align-items: center;
+                width: 100%; padding: 0 20px;
+                margin-bottom: 40px;
+            }
+            .soul-item { text-align: center; position: relative; }
+            .soul-num {
+                font-family: 'Noto Sans SC'; font-weight: 900; 
+                font-size: 5rem; line-height: 1;
+                color: #fff;
+                text-shadow: 0 0 30px rgba(255,255,255,0.6);
+                margin-bottom: 5px;
+            }
+            .soul-title {
+                font-family: 'Noto Serif SC'; font-weight: 700;
+                font-size: 1.2rem; letter-spacing: 2px;
+                margin-bottom: 5px;
+                text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            }
+            .soul-desc {
+                font-size: 0.75rem; letter-spacing: 1px;
+                opacity: 0.8; text-transform: uppercase;
+                text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            }
+            .soul-avatar {
+                font-size: 1rem; font-weight: bold;
+                display: inline-block; padding: 4px 12px;
+                border: 1px solid rgba(255,255,255,0.4);
+                border-radius: 20px; margin-bottom: 15px;
+                background: rgba(0,0,0,0.2); backdrop-filter: blur(5px);
+            }
+            .soul-footer { position: absolute; bottom: 15%; width: 100%; display: flex; justify-content: center; }
+            .typewriter-text {
+                font-family: 'Noto Serif SC', serif;
+                font-size: 0.95rem; color: rgba(255,255,255,0.9);
+                border-right: 2px solid rgba(255,255,255,0.7);
+                white-space: nowrap; overflow: hidden; width: 0;
+                animation: typing 3.5s steps(40, end) forwards, blink .75s step-end infinite;
+            }
+            @keyframes typing { from { width: 0; } to { width: 90%; max-width: 500px; } }
+            @keyframes blink { from, to { border-color: transparent; } 50% { border-color: rgba(255,255,255,0.7); } }
+
+            /* === 同频共振 (The Reactor) === */
+            .bg-gravity-v38 {
+                background: radial-gradient(circle at center, #2b1055 0%, #1a0b2e 40%, #000000 100%);
+                position: relative; overflow: hidden;
+            }
+            .static-orbit {
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                border-radius: 50%; border: 1px dashed rgba(255, 255, 255, 0.1);
+                pointer-events: none; z-index: 1;
+            }
+            .reactor-container {
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                z-index: 20; display: flex; justify-content: center; align-items: center;
+            }
+            .reactor-core {
+                width: 140px; height: 140px; border-radius: 50%;
+                background: radial-gradient(circle, rgba(188, 19, 254, 0.2), rgba(0, 0, 0, 0.8));
+                box-shadow: 0 0 40px rgba(188, 19, 254, 0.6), inset 0 0 20px rgba(0, 242, 255, 0.3);
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                position: relative; z-index: 25; border: 1px solid rgba(188, 19, 254, 0.5);
+            }
+            .reactor-num {
+                font-family: 'Noto Sans SC'; font-weight: 900; 
+                font-size: 3.5rem; line-height: 1; 
+                background: linear-gradient(to bottom, #fff, #00f2ff);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.8));
+            }
+            .reactor-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); letter-spacing: 1px; margin-top: 5px; }
+            .reactor-ring {
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                border-radius: 50%; border: 1px dashed rgba(0, 242, 255, 0.3); pointer-events: none;
+            }
+            .ring-1 { width: 160px; height: 160px; border-color: rgba(188, 19, 254, 0.4); animation: spin 10s linear infinite; }
+            .ring-2 { width: 190px; height: 190px; border-color: rgba(0, 242, 255, 0.2); animation: spin 15s linear infinite reverse; }
+            .ring-3 { width: 230px; height: 230px; border: 1px solid rgba(255,255,255,0.05); animation: pulseScale 3s ease-in-out infinite; }
+            @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+            @keyframes pulseScale { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } 50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; } }
+
+            .msg-orbit-layer {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                z-index: 10; pointer-events: none;
+            }
+            .orbit-track {
+                position: absolute; top: 50%; left: 50%;
+                width: calc(var(--r) * 2px); height: calc(var(--r) * 2px);
+                border-radius: 50%; transform: translate(-50%, -50%);
+                animation: orbit-spin var(--dur) linear infinite;
+                animation-delay: var(--del); animation-direction: var(--dir-css); 
+            }
+            .orbit-item {
+                position: absolute; top: 0; left: 50%;
+                transform: translate(-50%, -50%);
+                animation: orbit-counter-spin var(--dur) linear infinite;
+                animation-delay: var(--del); animation-direction: var(--counter-dir-css);
+            }
+            @keyframes orbit-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+            @keyframes orbit-counter-spin { from { transform: translate(-50%, -50%) rotate(0deg) scale(var(--s)); } to { transform: translate(-50%, -50%) rotate(-360deg) scale(var(--s)); } }
+
+            .orbit-text {
+                padding: 4px 10px; background: rgba(43, 16, 85, 0.6);
+                border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 12px;
+                font-size: 0.75rem; color: rgba(255,255,255,0.95);
+                white-space: nowrap; backdrop-filter: blur(2px);
+                box-shadow: 0 0 8px rgba(0, 242, 255, 0.2);
+            }
+            /* V40: 相机图标 */
+            .icon-cam {
+                font-size: 14px;
+                filter: drop-shadow(0 0 5px rgba(0, 242, 255, 0.8));
+            }
+            .gravity-footer {
+                position: absolute; bottom: 8%; width: 100%; text-align: center; z-index: 30;
+                color: rgba(0, 242, 255, 0.7); font-size: 0.8rem; letter-spacing: 1px;
+            }
+
+            /* === 封底：黎明破晓 === */
+            .bg-dawn {
+                background: linear-gradient(to top, #24243e 0%, #302b63 40%, #ff9a9e 85%, #fecfef 100%);
+                position: relative; overflow: hidden;
+            }
+            .dawn-glow {
+                position: absolute; top: -10%; left: 0; width: 100%; height: 60%;
+                background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+                animation: glowPulse 8s ease-in-out infinite alternate; pointer-events: none;
+            }
+            @keyframes glowPulse { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 0.8; transform: scale(1.1); } }
+            .dawn-particles { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+            .d-particle {
+                position: absolute; bottom: -20px; left: var(--l); width: var(--s); height: var(--s);
+                background: #ffd700; border-radius: 50%;
+                box-shadow: 0 0 10px #ffd700, 0 0 20px rgba(255, 165, 0, 0.6); opacity: 0;
+                animation: riseFloat var(--dur) linear infinite; animation-delay: var(--del);
+            }
+            @keyframes riseFloat { 0% { bottom: -20px; opacity: 0; transform: translateX(0); } 10% { opacity: var(--o); } 90% { opacity: var(--o); } 100% { bottom: 110%; opacity: 0; transform: translateX(calc(var(--sway) * 1px)); } }
+            .dawn-content { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 30px; }
+            .dawn-title {
+                font-family: 'Noto Serif SC', serif; font-size: 2.8rem; font-weight: 700; font-style: italic;
+                background: linear-gradient(to bottom, #fff 0%, #ffe0e0 100%);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                margin-bottom: 30px; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
+                opacity: 0; animation: dawnFadeUp 1s ease-out forwards; animation-delay: 0.2s;
+            }
+            .dawn-text {
+                font-size: 1rem; line-height: 1.8; color: rgba(255,255,255,0.9); margin-bottom: 50px;
+                opacity: 0; animation: dawnFadeUp 1s ease-out forwards; animation-delay: 0.6s;
+            }
+            .dawn-highlight { 
+                font-size: 2.5rem; 
+                
+                font-weight: 700; 
+                color: #fff; 
+                text-shadow: 0 0 20px rgba(255, 200, 200, 0.8);
+                margin-top: 15px; 
+                display: block; 
+                line-height: 1.4; 
+            }
+            /* .dawn-highlight { font-size: 3rem; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(255, 200, 200, 0.5); margin-top: 15px; display: block; } */
+            @keyframes dawnFadeUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            @keyframes rippleOut { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.8); opacity: 0; } }
+
+            /* 通用组件 */
+            .bg-dark { background: #111; }
+            .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); padding: 30px 20px; width: 88%; max-width: 450px; text-align: center; border-radius: 30px; position: relative; z-index: 10; }
+            .stream-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: space-between; pointer-events: none; opacity: 0.6; z-index: 0; mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); }
+            .stream-col { width: 32%; display: flex; flex-direction: column; gap: 15px; }
+            .stream-col.up { animation: scrollUp 20s linear infinite; }
+            .stream-col.down { animation: scrollDown 25s linear infinite; }
+            .stream-bubble { background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; font-size: 0.7rem; color: rgba(255,255,255,0.95); backdrop-filter: blur(4px); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+            .stream-bubble.me { align-self: flex-end; border-radius: 10px 10px 2px 10px; background: rgba(255,255,255,0.25); }
+            .stream-bubble.other { align-self: flex-start; border-radius: 10px 10px 10px 2px; }
+            @keyframes scrollUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+            @keyframes scrollDown { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+            .naked-data { position: relative; z-index: 10; text-align: center; text-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+            .naked-big { font-family: 'Noto Sans SC'; font-weight: 900; font-size: 7rem; line-height: 1; margin: 20px 0; background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.7)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+            .ripple-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; pointer-events: none; }
+            .ripple-center { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; font-weight: bold; z-index: 20; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+            .ripple-circle { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; animation: rippleExpand 4s infinite linear; opacity: 0; }
+            .ripple-word { position: absolute; font-size: 0.9rem; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 15px; animation: wordFloat 4s infinite linear; opacity: 0; }
+            @keyframes rippleExpand { 0% { width: 0; height: 0; opacity: 0.8; border-width: 3px; } 100% { width: 600px; height: 600px; opacity: 0; border-width: 0px; } }
+            @keyframes wordFloat { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; top: 40%; left: 50%; } 20% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; top: var(--end-top); left: var(--end-left); } }
+            .sub-text { font-size: 0.75rem; opacity: 0.8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; }
+            .lb-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; color: #333; }
+            .lb-kws { font-size: 0.75rem; opacity: 0.8; max-width: 80%; line-height: 1.3; }
+            @keyframes extremeMorph { 0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(-50%, -50%) rotate(0deg) scale(1); } 33% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: translate(-60%, -60%) rotate(120deg) scale(1.1); } 66% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; transform: translate(-40%, -40%) rotate(240deg) scale(0.9); } 100% { border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%; transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
+            .bg-topics { background: linear-gradient(to bottom, #fff1eb 0%, #ace0f9 100%); position: relative; overflow: hidden; }
+            .liquid-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+            .liquid-blob { position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #444; transition: all 0.5s ease; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: extremeMorph 6s ease-in-out infinite alternate; backdrop-filter: blur(10px); box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 10px 20px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); }
+            .lb-1 { width: 320px; height: 320px; background: rgba(255, 192, 203, 0.5); z-index: 1; top: 40%; left: 50%; transform: translate(-50%, -50%); }
+            .lb-2 { width: 160px; height: 160px; background: rgba(135, 206, 250, 0.6); z-index: 2; top: 65%; left: 25%; transform: translate(-50%, -50%); animation-delay: -2s; }
+            .lb-3 { width: 140px; height: 140px; background: rgba(255, 250, 205, 0.7); z-index: 3; top: 60%; left: 75%; transform: translate(-50%, -50%); animation-delay: -4s; }
+            .lb-4 { width: 110px; height: 110px; background: rgba(221, 160, 221, 0.6); z-index: 2; top: 25%; left: 70%; transform: translate(-50%, -50%); animation-delay: -1s; }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+
+            <!-- 1. 首页 -->
+            <div class="section bg-aurora">
+                <div id="opening-stage">
+                    
+                    <div class="op-bubble" style="left: 29%; transform: scale(1.1047755467102396); filter: blur(0px); animation-duration: 3.440277387791074s; animation-delay: 0.3796825923579926s;">551204</div>
+                    
+                    <div class="op-bubble" style="left: 23%; transform: scale(1.0395146319317452); filter: blur(0px); animation-duration: 3.3438774155014612s; animation-delay: 0.6780829711314602s;">哦哦</div>
+                    
+                    <div class="op-bubble" style="left: 66%; transform: scale(0.8915754529164184); filter: blur(0px); animation-duration: 2.8336713263192808s; animation-delay: 1.1122601040799047s;">这小子感觉累坏了</div>
+                    
+                    <div class="op-bubble" style="left: 41%; transform: scale(1.1897063207312057); filter: blur(0px); animation-duration: 3.64255445386045s; animation-delay: 1.4700251568495433s;">哈哈那你的周末差不多补回来了</div>
+                    
+                    <div class="op-bubble" style="left: 19%; transform: scale(1.0882128859975637); filter: blur(0px); animation-duration: 2.8072549543706464s; animation-delay: 0.25449768530195604s;">晚安啦</div>
+                    
+                    <div class="op-bubble" style="left: 37%; transform: scale(0.8068648158672035); filter: blur(0px); animation-duration: 2.6409522352053565s; animation-delay: 0.8794962986105784s;">早上好</div>
+                    
+                    <div class="op-bubble" style="left: 24%; transform: scale(0.9241503560268698); filter: blur(0px); animation-duration: 3.5092869764846175s; animation-delay: 1.296280816801613s;">[图片]</div>
+                    
+                    <div class="op-bubble" style="left: 14%; transform: scale(0.9738549787219872); filter: blur(2px); animation-duration: 3.166835504878983s; animation-delay: 0.028821513071184468s;">晚安啦</div>
+                    
+                    <div class="op-bubble" style="left: 10%; transform: scale(0.9923232368557255); filter: blur(1px); animation-duration: 3.3455316100007466s; animation-delay: 0.20770104713666182s;">哈哈哈哈我也有过这个想法</div>
+                    
+                    <div class="op-bubble" style="left: 58%; transform: scale(1.0454372510174672); filter: blur(0px); animation-duration: 3.8132175954732537s; animation-delay: 0.8738161667631241s;">[表情包]</div>
+                    
+                    <div class="op-bubble" style="left: 8%; transform: scale(0.7557736214834737); filter: blur(0px); animation-duration: 3.443415096986187s; animation-delay: 1.3414698401807958s;">晚安啦</div>
+                    
+                    <div class="op-bubble" style="left: 32%; transform: scale(0.9548136150241164); filter: blur(0px); animation-duration: 3.7607009010758268s; animation-delay: 0.1304116830227825s;">真快呀</div>
+                    
+                    <div class="op-bubble" style="left: 88%; transform: scale(1.0011099292349686); filter: blur(0px); animation-duration: 3.448118551612186s; animation-delay: 0.9391345801453583s;">看着就头疼了</div>
+                    
+                    <div class="op-bubble" style="left: 52%; transform: scale(0.9433739934169383); filter: blur(1px); animation-duration: 3.4374111334313175s; animation-delay: 0.625996888802095s;">挺着急的呢</div>
+                    
+                    <div class="op-bubble" style="left: 66%; transform: scale(1.078753248206913); filter: blur(0px); animation-duration: 3.437277945647545s; animation-delay: 1.3196808152183397s;">晚上好</div>
+                    
+                    <div class="op-bubble" style="left: 6%; transform: scale(1.138486764161255); filter: blur(0px); animation-duration: 3.677827298851363s; animation-delay: 0.9744830851974406s;">又变漂亮了</div>
+                    
+                    <div class="op-bubble" style="left: 39%; transform: scale(0.6903464133875532); filter: blur(0px); animation-duration: 3.2906453320786286s; animation-delay: 0.2986229506443589s;">小小休息一下就怕又出问题</div>
+                    
+                    <div class="op-bubble" style="left: 54%; transform: scale(0.9142837719479093); filter: blur(0px); animation-duration: 3.8903011321815915s; animation-delay: 1.0494303464797272s;">下午好呀</div>
+                    
+                    <div class="op-bubble" style="left: 37%; transform: scale(0.8362326192559588); filter: blur(0px); animation-duration: 3.362052082112194s; animation-delay: 1.2338816621673512s;">哈哈哈指不定是挨骂了</div>
+                    
+                    <div class="op-bubble" style="left: 34%; transform: scale(0.7911461054302581); filter: blur(0px); animation-duration: 2.8777532452776544s; animation-delay: 0.8862096388843541s;">哈哈(ಡωಡ)</div>
+                    
+                    <div class="op-bubble" style="left: 39%; transform: scale(0.6516939566561736); filter: blur(1px); animation-duration: 3.6454011101870014s; animation-delay: 1.1554564562976677s;">主要是自前几天下雨就突然有很冷..</div>
+                    
+                    <div class="op-bubble" style="left: 13%; transform: scale(0.8814809705303313); filter: blur(2px); animation-duration: 3.955295540033399s; animation-delay: 1.3748525117135968s;">[视频]</div>
+                    
+                    <div class="op-bubble" style="left: 77%; transform: scale(0.7253835412482303); filter: blur(2px); animation-duration: 3.8502494010789516s; animation-delay: 0.08126972122897891s;">好的嘞</div>
+                    
+                    <div class="op-bubble" style="left: 81%; transform: scale(1.1336127631321937); filter: blur(0px); animation-duration: 2.967031182303974s; animation-delay: 1.2083045397767815s;">早上好呀</div>
+                    
+                    <div class="op-bubble" style="left: 22%; transform: scale(1.1413945575218287); filter: blur(1px); animation-duration: 3.127120579845112s; animation-delay: 1.0345280767570983s;">哈哈这样</div>
+                    
+                    <div class="op-bubble" style="left: 48%; transform: scale(0.9528014674149174); filter: blur(0px); animation-duration: 2.6487633314642824s; animation-delay: 1.084868029436993s;">[阴险]</div>
+                    
+                    <div class="op-bubble" style="left: 71%; transform: scale(1.0701845339563127); filter: blur(0px); animation-duration: 3.0877176517317855s; animation-delay: 0.868954095670065s;">中午好</div>
+                    
+                    <div class="op-bubble" style="left: 10%; transform: scale(1.1803447295596068); filter: blur(0px); animation-duration: 2.566369594560348s; animation-delay: 0.222568982495841s;">[表情包]</div>
+                    
+                    <div class="op-bubble" style="left: 68%; transform: scale(0.7995718360907162); filter: blur(2px); animation-duration: 3.0865079449584107s; animation-delay: 0.04706505483743634s;">很快</div>
+                    
+                    <div class="op-bubble" style="left: 60%; transform: scale(0.9122399874339453); filter: blur(0px); animation-duration: 3.012384042071446s; animation-delay: 1.2003600783502086s;">晚安啦</div>
+                    
+                    <div class="op-bubble" style="left: 40%; transform: scale(1.0634152022585135); filter: blur(1px); animation-duration: 3.1205188530929635s; animation-delay: 0.5474538648774304s;">睡不着了</div>
+                    
+                    <div class="op-bubble" style="left: 52%; transform: scale(1.0102179393427388); filter: blur(1px); animation-duration: 2.747472927498004s; animation-delay: 0.42239260744677637s;">到奶奶家吃饭就人多了</div>
+                    
+                    <div class="op-bubble" style="left: 67%; transform: scale(0.9117270984307306); filter: blur(1px); animation-duration: 3.7650025916671184s; animation-delay: 0.024809785358117897s;">你花了多少钱[Doge]</div>
+                    
+                    <div class="op-bubble" style="left: 26%; transform: scale(1.123386253513199); filter: blur(2px); animation-duration: 3.389350981651551s; animation-delay: 0.7205005097241182s;">灵魂都到家休假了</div>
+                    
+                    <div class="op-bubble" style="left: 26%; transform: scale(1.1364045841284263); filter: blur(2px); animation-duration: 2.9027412682483393s; animation-delay: 0.4998515827871173s;">早呢</div>
+                    
+                    <div class="op-bubble" style="left: 82%; transform: scale(1.0697096091315457); filter: blur(2px); animation-duration: 2.6729993630113125s; animation-delay: 1.2098622155104437s;">[图片]</div>
+                    
+                    <div class="op-bubble" style="left: 51%; transform: scale(0.8126468323801885); filter: blur(0px); animation-duration: 2.5869540983855828s; animation-delay: 0.2836500811344642s;">具体我也不清楚呢</div>
+                    
+                    <div class="op-bubble" style="left: 91%; transform: scale(0.8621126309786573); filter: blur(1px); animation-duration: 2.9373719826951765s; animation-delay: 0.5276845939078896s;">可惜了</div>
+                    
+                    <div class="op-bubble" style="left: 12%; transform: scale(1.133123771535473); filter: blur(0px); animation-duration: 2.682660508187329s; animation-delay: 1.3765377236612413s;">这么多会得开啊</div>
+                    
+                    <div class="op-bubble" style="left: 34%; transform: scale(0.7642204845390126); filter: blur(0px); animation-duration: 2.7524878634181547s; animation-delay: 0.662053090637605s;">[图片]</div>
+                    
+                    <div class="op-bubble" style="left: 12%; transform: scale(1.1049716185427647); filter: blur(0px); animation-duration: 3.9510096789685036s; animation-delay: 0.7588370913163703s;">晚上好</div>
+                    
+                    <div class="op-bubble" style="left: 19%; transform: scale(0.8335636745208166); filter: blur(1px); animation-duration: 3.2459980884047184s; animation-delay: 0.4119780915707793s;">下周三我还请了天假呢</div>
+                    
+                    <div class="op-bubble" style="left: 76%; transform: scale(0.934255857765296); filter: blur(0px); animation-duration: 2.7022038092572855s; animation-delay: 0.48290790376056747s;">[图片]</div>
+                    
+                    <div class="op-bubble" style="left: 5%; transform: scale(0.7975002360058613); filter: blur(1px); animation-duration: 3.12187033541351s; animation-delay: 0.8040640814207349s;">[旺柴]</div>
+                    
+                    <div class="op-bubble" style="left: 69%; transform: scale(0.9430037720286424); filter: blur(1px); animation-duration: 3.1589268078864756s; animation-delay: 0.8418699710237453s;">早呀</div>
+                    
+                    <div class="op-bubble" style="left: 65%; transform: scale(0.795380015052714); filter: blur(1px); animation-duration: 2.5317852250247492s; animation-delay: 1.3137513051810408s;">好滴</div>
+                    
+                    <div class="op-bubble" style="left: 54%; transform: scale(0.967364446009666); filter: blur(0px); animation-duration: 3.6784300184096237s; animation-delay: 0.8637499053016783s;">猪肉呢</div>
+                    
+                    <div class="op-bubble" style="left: 46%; transform: scale(1.009408088025281); filter: blur(2px); animation-duration: 3.2799493683139698s; animation-delay: 0.7748685016709818s;">对的，一致对我无语</div>
+                    
+                    <div class="op-bubble" style="left: 69%; transform: scale(0.6237295160908017); filter: blur(2px); animation-duration: 3.410691498546467s; animation-delay: 0.20468840889778556s;">[其他]</div>
+                    
+                    <div class="op-bubble" style="left: 34%; transform: scale(1.1531605995875305); filter: blur(0px); animation-duration: 3.8597082644433423s; animation-delay: 1.3602008722336323s;">发呆在想什么呢</div>
+                    
+                    <div class="op-bubble" style="left: 67%; transform: scale(1.0175823413105023); filter: blur(1px); animation-duration: 2.9275307730243076s; animation-delay: 0.27484610125245473s;">晚上好</div>
+                    
+                    <div class="op-bubble" style="left: 50%; transform: scale(0.621421939572301); filter: blur(2px); animation-duration: 2.811437028077362s; animation-delay: 0.4471826056782051s;">我觉得咱们每天这样机械地重复太..</div>
+                    
+                    <div class="op-bubble" style="left: 17%; transform: scale(1.029535144577411); filter: blur(2px); animation-duration: 2.5653468460621034s; animation-delay: 1.0445043180641997s;">好</div>
+                    
+                    <div class="op-bubble" style="left: 32%; transform: scale(0.9872347827873197); filter: blur(0px); animation-duration: 3.710980587990984s; animation-delay: 0.7044160338386588s;">晚安啦</div>
+                    
+                    <div class="op-bubble" style="left: 20%; transform: scale(0.8320268632525557); filter: blur(2px); animation-duration: 2.5996015594954303s; animation-delay: 1.2446504342698574s;">今晚可以一起跨年[机智]</div>
+                    
+                    <div class="op-bubble" style="left: 12%; transform: scale(1.0037033601174266); filter: blur(2px); animation-duration: 3.826498586911859s; animation-delay: 0.9795804205801832s;">可能也激动了，要回家了</div>
+                    
+                    <div class="op-bubble" style="left: 44%; transform: scale(0.9706390617094178); filter: blur(0px); animation-duration: 2.8100712217773056s; animation-delay: 0.5178169503383908s;">也分好几种呢</div>
+                    
+                    <div class="op-bubble" style="left: 49%; transform: scale(0.8685881271392085); filter: blur(0px); animation-duration: 2.5115839267380933s; animation-delay: 0.9445582292698734s;">但是老不做也手生</div>
+                    
+                    <div class="op-bubble" style="left: 45%; transform: scale(1.0685611361370433); filter: blur(0px); animation-duration: 3.1475891116911874s; animation-delay: 0.6117513340228355s;">[视频]</div>
+                    
+                    <div class="op-bubble" style="left: 39%; transform: scale(0.7843480149010282); filter: blur(2px); animation-duration: 3.187510619766396s; animation-delay: 0.13089654607570433s;">明天就出差了</div>
+                    
+                </div>
+                <div id="core-glow"></div>
+                <div id="cover-content">
+                    <div style="font-size: 1rem; letter-spacing: 4px; opacity: 0.8; margin-bottom: 20px;">2024 - 2025</div>
+                    <div class="cover-title">我们的<br>独家记忆</div>
+                    <div class="cover-num">16393</div>
+                    <div style="font-size: 1rem; opacity: 0.7;">条消息，跨越 666 个日夜</div>
+                </div>
+            </div>
+
+            <!-- 2-5. 四季 -->
+            <div class="section bg-spring">
+                <div class="spring-layer"><div class="bubble-spring" style="--l: 55%; --del: 1.6171997538316858s; --dur: 10.86970509550439s;">明天又降温</div><div class="bubble-spring" style="--l: 49%; --del: 4.61738918629823s; --dur: 16.142882139524158s;">就中午停了一会，其他时间都一直..</div><div class="bubble-spring" style="--l: 35%; --del: 2.0264502228224464s; --dur: 11.109844756533809s;">今天没晚自习吧</div><div class="bubble-spring" style="--l: 12%; --del: 0.284564565345094s; --dur: 11.848706951847602s;">好滴，快吃饭吧</div><div class="bubble-spring" style="--l: 16%; --del: 2.692667111848537s; --dur: 19.193608574812604s;">哈哈这样嘛，下次挑个清淡点的</div><div class="bubble-spring" style="--l: 31%; --del: 0.4319935061637509s; --dur: 16.41588162940654s;">[表情包]</div><div class="bubble-spring" style="--l: 19%; --del: 4.19005130037437s; --dur: 10.195666723136394s;">明天单位也开空调了</div><div class="bubble-spring" style="--l: 65%; --del: 1.356904388674947s; --dur: 14.83114328465227s;">不远的</div><div class="bubble-spring" style="--l: 13%; --del: 1.854252882602132s; --dur: 14.369894403149736s;">对滴</div><div class="bubble-spring" style="--l: 62%; --del: 1.9549687189519305s; --dur: 17.012868052356467s;">期待中</div><div class="bubble-spring" style="--l: 76%; --del: 1.4104221785826765s; --dur: 13.841960935045027s;">噢回来啦</div><div class="bubble-spring" style="--l: 46%; --del: 1.1250475212071076s; --dur: 15.201171651731276s;">一会给你分享一下我唱的歌吧，一..</div><div class="bubble-spring" style="--l: 78%; --del: 0.23462447694598654s; --dur: 12.046955754319152s;">晚上好</div><div class="bubble-spring" style="--l: 72%; --del: 2.0318686806846955s; --dur: 16.38658862489482s;">时间还长着呢</div><div class="bubble-spring" style="--l: 33%; --del: 2.5747456181596s; --dur: 15.332516928164281s;">早上好</div><div class="bubble-spring" style="--l: 75%; --del: 1.5988420726173924s; --dur: 13.246463299302285s;">哈你好好休息会吧</div><div class="bubble-spring" style="--l: 75%; --del: 4.3550613768872335s; --dur: 15.923336855208431s;">你打算几点睡觉呢</div><div class="bubble-spring" style="--l: 17%; --del: 3.2872219738689163s; --dur: 10.601220325858261s;">因为周五了吗|･ω･｀)</div><div class="bubble-spring" style="--l: 82%; --del: 2.4401170219057478s; --dur: 16.946493717651233s;">晚好呀</div><div class="bubble-spring" style="--l: 29%; --del: 0.6650125475123991s; --dur: 15.578357949929675s;">噢噢那真是蛮长的哎</div><div class="bubble-spring" style="--l: 78%; --del: 2.0297009504706445s; --dur: 13.619871119492863s;">买了一个</div><div class="bubble-spring" style="--l: 56%; --del: 3.9993803252953164s; --dur: 13.106269562954031s;">趁着小直接跑了</div><div class="bubble-spring" style="--l: 13%; --del: 2.8823295033121736s; --dur: 12.1723107887561s;">哈哈外出记得带伞</div><div class="bubble-spring" style="--l: 52%; --del: 4.06714647080995s; --dur: 18.773123855432246s;">早呀</div><div class="bubble-spring" style="--l: 46%; --del: 1.9182878762451239s; --dur: 14.726926168984082s;">到了才知道不训了</div></div>
+                <div class="halo-container"><div class="halo-content"><div class="season-sub">SPRING</div><div class="season-title">暖春</div><div class="season-count">5495</div><div class="season-desc">像苏打水里的气泡<br>每一句话都充满生机</div></div></div>
+            </div>
+            <div class="section bg-summer">
+                <div class="summer-layer"><div class="bubble-summer" style="--t: 50%; --del: 3.9508189126176747s; --dur: 4s;">下午好啊</div><div class="bubble-summer" style="--t: 63%; --del: 4.991084286906212s; --dur: 5s;">早上好</div><div class="bubble-summer" style="--t: 80%; --del: 4.099234525944725s; --dur: 7s;">所以你还是弄个短发</div><div class="bubble-summer" style="--t: 74%; --del: 0.5191435672770139s; --dur: 7s;">那你怎么打算呢</div><div class="bubble-summer" style="--t: 15%; --del: 0.8435615159487841s; --dur: 5s;">好哦好哦</div><div class="bubble-summer" style="--t: 9%; --del: 2.5522439041041345s; --dur: 5s;">每天看一页就行</div><div class="bubble-summer" style="--t: 36%; --del: 1.1409425215805764s; --dur: 7s;">尽力就行了</div><div class="bubble-summer" style="--t: 28%; --del: 4.082148042437749s; --dur: 7s;">噢噢这一届就选科了，我们那届就..</div><div class="bubble-summer" style="--t: 79%; --del: 3.1267297045686253s; --dur: 5s;">确实是虚得不行哈哈</div><div class="bubble-summer" style="--t: 11%; --del: 3.552524987724612s; --dur: 7s;">早上好</div><div class="bubble-summer" style="--t: 87%; --del: 3.2630768924432734s; --dur: 7s;">晚安啦</div><div class="bubble-summer" style="--t: 29%; --del: 4.726543042754501s; --dur: 5s;">没呢，明天或者后天回家</div><div class="bubble-summer" style="--t: 61%; --del: 3.1264120783846665s; --dur: 6s;">其实人家长这样</div><div class="bubble-summer" style="--t: 31%; --del: 3.9493879883704186s; --dur: 6s;">哈哈这是个长期战</div><div class="bubble-summer" style="--t: 68%; --del: 4.529746598445358s; --dur: 4s;">东村教室没有哈哈哈</div><div class="bubble-summer" style="--t: 7%; --del: 2.9417247829059456s; --dur: 3s;">早呢</div><div class="bubble-summer" style="--t: 12%; --del: 1.8255226965919846s; --dur: 5s;">[表情包]</div><div class="bubble-summer" style="--t: 78%; --del: 1.2157921132477667s; --dur: 4s;">早上好</div><div class="bubble-summer" style="--t: 89%; --del: 2.099656660683235s; --dur: 5s;">现在看什么都无趣了</div><div class="bubble-summer" style="--t: 42%; --del: 0.2199755505341533s; --dur: 7s;">没呢，刚下班</div><div class="bubble-summer" style="--t: 63%; --del: 4.391818233344699s; --dur: 6s;">有钱了就不会有现在的烦恼了</div><div class="bubble-summer" style="--t: 58%; --del: 4.75490686054081s; --dur: 5s;">女强人[偷笑]</div><div class="bubble-summer" style="--t: 47%; --del: 1.8101578360889166s; --dur: 5s;">哈哈</div><div class="bubble-summer" style="--t: 88%; --del: 3.6413100811016585s; --dur: 3s;">早呢</div><div class="bubble-summer" style="--t: 17%; --del: 4.309121661714857s; --dur: 7s;">一动不动</div><div class="bubble-summer" style="--t: 39%; --del: 2.6282058591341073s; --dur: 7s;">我们这组有四个人</div><div class="bubble-summer" style="--t: 77%; --del: 1.8517337100932592s; --dur: 5s;">哈哈那你干啥</div><div class="bubble-summer" style="--t: 28%; --del: 2.5591236441876326s; --dur: 6s;">我都脱衣服了</div><div class="bubble-summer" style="--t: 48%; --del: 3.1361919623968193s; --dur: 6s;">哈哈从小玩到大</div><div class="bubble-summer" style="--t: 67%; --del: 1.3507653682656757s; --dur: 4s;">什么票呢</div></div>
+                <div class="halo-container"><div class="halo-content"><div class="season-sub">SUMMER</div><div class="season-title">炎夏</div><div class="season-count">2588</div><div class="season-desc">光影流转的瞬间<br>是我们最滚烫的回应</div></div></div>
+            </div>
+            <div class="section bg-autumn">
+                <div class="autumn-layer"><div class="bubble-autumn" style="--l: 18%; --del: 1.453530139483639s; --dur: 15.957613390181077s; --rot: -1deg;">晚上好</div><div class="bubble-autumn" style="--l: 88%; --del: 2.8132186057705s; --dur: 18.670864101989896s; --rot: 4deg;">工作时间会很忙吗</div><div class="bubble-autumn" style="--l: 27%; --del: 1.5287602335742427s; --dur: 16.51976591129437s; --rot: -4deg;">晚安啦</div><div class="bubble-autumn" style="--l: 51%; --del: 0.06450810098609094s; --dur: 14.019174536394281s; --rot: 4deg;">晚安啦</div><div class="bubble-autumn" style="--l: 10%; --del: 2.527404276303949s; --dur: 18.434245058867948s; --rot: 0deg;">[其他]</div><div class="bubble-autumn" style="--l: 19%; --del: 3.3370343012683357s; --dur: 18.527480646571917s; --rot: -2deg;">晚安啦</div><div class="bubble-autumn" style="--l: 72%; --del: 4.113971544308587s; --dur: 12.021464643208965s; --rot: -10deg;">[图片]</div><div class="bubble-autumn" style="--l: 16%; --del: 1.3867227100484918s; --dur: 11.540808735307671s; --rot: -5deg;">晚上好</div><div class="bubble-autumn" style="--l: 48%; --del: 1.4132869108341466s; --dur: 17.741094567516747s; --rot: -8deg;">晚安啦</div><div class="bubble-autumn" style="--l: 25%; --del: 3.90667989421814s; --dur: 13.967054386563493s; --rot: 12deg;">没事</div><div class="bubble-autumn" style="--l: 86%; --del: 0.11415945695388008s; --dur: 14.720900453770824s; --rot: -2deg;">是的</div><div class="bubble-autumn" style="--l: 70%; --del: 4.885547701708639s; --dur: 10.085665249432484s; --rot: 11deg;">早上好</div><div class="bubble-autumn" style="--l: 61%; --del: 0.7653256194381303s; --dur: 19.806595984524144s; --rot: 9deg;">[偷笑]</div><div class="bubble-autumn" style="--l: 17%; --del: 2.938804520854779s; --dur: 17.18906570794783s; --rot: 11deg;">晚安</div><div class="bubble-autumn" style="--l: 18%; --del: 2.8076789780554634s; --dur: 18.850851310228656s; --rot: -3deg;">目前在这</div><div class="bubble-autumn" style="--l: 77%; --del: 1.479652681355104s; --dur: 15.094185720166251s; --rot: -7deg;">连续剧</div><div class="bubble-autumn" style="--l: 58%; --del: 3.5638771087429673s; --dur: 15.418976332763648s; --rot: -8deg;">晚上好</div><div class="bubble-autumn" style="--l: 84%; --del: 2.3049599912494205s; --dur: 17.25622145968847s; --rot: -15deg;">[图片]</div><div class="bubble-autumn" style="--l: 48%; --del: 3.249419556706834s; --dur: 18.28052260896701s; --rot: -4deg;">让生活充实起来就不会了哈哈</div><div class="bubble-autumn" style="--l: 6%; --del: 0.14387327405852746s; --dur: 17.72561290516506s; --rot: 10deg;">晚上好</div></div>
+                <div class="halo-container"><div class="halo-content"><div class="season-sub">AUTUMN</div><div class="season-title">凉秋</div><div class="season-count">1239</div><div class="season-desc">像落叶归根的信笺<br>写满温柔的碎碎念</div></div></div>
+            </div>
+            <div class="section bg-winter">
+                <div class="winter-layer"><div class="bubble-winter" style="--l: 26%; --t: 43%; --del: 1.1911432326881832s; --dur: 5s;">这个只有76节课 上面的有一百..</div><div class="bubble-winter" style="--l: 39%; --t: 83%; --del: 2.1084283301421216s; --dur: 5s;">嗯差不多好了</div><div class="bubble-winter" style="--l: 76%; --t: 48%; --del: 1.6278810802035426s; --dur: 5s;">你这还几门考试呀</div><div class="bubble-winter" style="--l: 35%; --t: 41%; --del: 3.6298568680051786s; --dur: 3s;">有一种魔力</div><div class="bubble-winter" style="--l: 52%; --t: 27%; --del: 4.460002114659672s; --dur: 5s;">洗衣服这大声嘛</div><div class="bubble-winter" style="--l: 60%; --t: 58%; --del: 2.8247004472190413s; --dur: 4s;">是的让我20号走</div><div class="bubble-winter" style="--l: 69%; --t: 29%; --del: 3.4305794469741624s; --dur: 4s;">收拾了一下衣服</div><div class="bubble-winter" style="--l: 65%; --t: 47%; --del: 3.8393072425687396s; --dur: 3s;">[图片]</div><div class="bubble-winter" style="--l: 37%; --t: 14%; --del: 1.2576852150104667s; --dur: 5s;">都是好姐妹</div><div class="bubble-winter" style="--l: 40%; --t: 58%; --del: 0.00957275911538158s; --dur: 5s;">晚上好</div><div class="bubble-winter" style="--l: 33%; --t: 71%; --del: 0.9798051293887527s; --dur: 5s;">小一点</div><div class="bubble-winter" style="--l: 67%; --t: 36%; --del: 4.533519464985138s; --dur: 4s;">今天上班是异常不顺利</div><div class="bubble-winter" style="--l: 89%; --t: 33%; --del: 3.5230183094072087s; --dur: 4s;">干活了！</div><div class="bubble-winter" style="--l: 90%; --t: 18%; --del: 2.4102437183278584s; --dur: 4s;">过些天也下雨</div><div class="bubble-winter" style="--l: 84%; --t: 43%; --del: 2.81126132569371s; --dur: 4s;">什么牌子的</div></div>
+                <div class="halo-container"><div class="halo-content"><div class="season-sub">WINTER</div><div class="season-title">寒冬</div><div class="season-count">7071</div><div class="season-desc">时间仿佛在此刻静止<br>只听见呼吸的声音</div></div></div>
+            </div>
+
+            <!-- 6. 最晚的一天 -->
+            <div class="section bg-lullaby">
+                <div class="clouds-layer">
+                    
+                    <div class="cloud-puff" style="top: 34%; left: 40%; width: 200px; height: 209px; animation-duration: 29s;"></div>
+                    
+                    <div class="cloud-puff" style="top: 45%; left: 61%; width: 376px; height: 387px; animation-duration: 21s;"></div>
+                    
+                    <div class="cloud-puff" style="top: 49%; left: 31%; width: 230px; height: 265px; animation-duration: 29s;"></div>
+                    
+                    <div class="cloud-puff" style="top: 52%; left: 40%; width: 293px; height: 373px; animation-duration: 24s;"></div>
+                    
+                    <div class="cloud-puff" style="top: 42%; left: 68%; width: 302px; height: 206px; animation-duration: 25s;"></div>
+                    
+                </div>
+                <div class="pendulum-wrapper">
+                    <div class="silver-string"></div>
+                    <div class="crescent-moon-pendulum"></div>
+                    <div class="moon-beam"></div>
+                </div>
+                <div class="fireflies-layer">
+                    
+                    <div class="firefly" style="--l: 19%; --dur: 8s; --del: 4s;"></div>
+                    
+                    <div class="firefly" style="--l: 38%; --dur: 10s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 90%; --dur: 11s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 68%; --dur: 5s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 98%; --dur: 6s; --del: 2s;"></div>
+                    
+                    <div class="firefly" style="--l: 33%; --dur: 5s; --del: 3s;"></div>
+                    
+                    <div class="firefly" style="--l: 63%; --dur: 6s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 3%; --dur: 5s; --del: 3s;"></div>
+                    
+                    <div class="firefly" style="--l: 6%; --dur: 6s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 96%; --dur: 10s; --del: 4s;"></div>
+                    
+                    <div class="firefly" style="--l: 82%; --dur: 5s; --del: 4s;"></div>
+                    
+                    <div class="firefly" style="--l: 38%; --dur: 7s; --del: 0s;"></div>
+                    
+                    <div class="firefly" style="--l: 78%; --dur: 8s; --del: 3s;"></div>
+                    
+                    <div class="firefly" style="--l: 97%; --dur: 9s; --del: 4s;"></div>
+                    
+                    <div class="firefly" style="--l: 25%; --dur: 11s; --del: 3s;"></div>
+                    
+                    <div class="firefly" style="--l: 55%; --dur: 9s; --del: 0s;"></div>
+                    
+                    <div class="firefly" style="--l: 45%; --dur: 10s; --del: 0s;"></div>
+                    
+                    <div class="firefly" style="--l: 52%; --dur: 5s; --del: 4s;"></div>
+                    
+                    <div class="firefly" style="--l: 44%; --dur: 9s; --del: 0s;"></div>
+                    
+                    <div class="firefly" style="--l: 64%; --dur: 11s; --del: 3s;"></div>
+                    
+                    <div class="firefly" style="--l: 65%; --dur: 5s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 18%; --dur: 7s; --del: 3s;"></div>
+                    
+                    <div class="firefly" style="--l: 13%; --dur: 9s; --del: 2s;"></div>
+                    
+                    <div class="firefly" style="--l: 10%; --dur: 8s; --del: 2s;"></div>
+                    
+                    <div class="firefly" style="--l: 77%; --dur: 9s; --del: 0s;"></div>
+                    
+                    <div class="firefly" style="--l: 45%; --dur: 9s; --del: 1s;"></div>
+                    
+                    <div class="firefly" style="--l: 8%; --dur: 7s; --del: 0s;"></div>
+                    
+                    <div class="firefly" style="--l: 11%; --dur: 11s; --del: 2s;"></div>
+                    
+                    <div class="firefly" style="--l: 6%; --dur: 6s; --del: 4s;"></div>
+                    
+                    <div class="firefly" style="--l: 88%; --dur: 7s; --del: 2s;"></div>
+                    
+                </div>
+                <div class="lullaby-chat-container">
+                    
+                    <div class="l-msg me" style="animation-delay: 0.2s">
+                        <span class="l-time">11:56</span>
+                        午好呀
+                    </div>
+                    
+                    <div class="l-msg other" style="animation-delay: 0.4s">
+                        <span class="l-time">11:57</span>
+                        午好啊
+                    </div>
+                    
+                    <div class="l-msg other" style="animation-delay: 0.6000000000000001s">
+                        <span class="l-time">21:23</span>
+                        回来啦
+                    </div>
+                    
+                    <div class="l-msg other" style="animation-delay: 0.8s">
+                        <span class="l-time">22:10</span>
+                        晚安啦
+                    </div>
+                    
+                    <div class="l-msg me" style="animation-delay: 1.0s">
+                        <span class="l-time">22:11</span>
+                        晚安啦
+                    </div>
+                    
+                    <div class="l-msg me" style="animation-delay: 1.2000000000000002s">
+                        <span class="l-time">22:11</span>
+                        今天又被请吃饭喝酒了
+                    </div>
+                    
+                    <div class="l-msg me" style="animation-delay: 1.4000000000000001s">
+                        <span class="l-time">22:11</span>
+                        刚回来[抠鼻]
+                    </div>
+                    
+                    <div class="l-msg other" style="animation-delay: 1.6s">
+                        <span class="l-time">02:53</span>
+                        哈哈新同事很给力嘛
+                    </div>
+                    
+                </div>
+                <div class="lullaby-data">
+                    <div class="sub-text" style="color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.8);">最晚的一天</div>
+                    <div class="lullaby-time">2:53</div>
+                    <div class="lullaby-date">2024-04-30</div>
+                </div>
+            </div>
+
+            <!-- 7. 话痨时刻 -->
+            <div class="section bg-summer">
+                <div class="stream-container">
+                    <div class="stream-col up"><div class="stream-bubble other">不瞒你说，有时候还得找ai问问</div><div class="stream-bubble other">哈哈哈不过一般没啥用</div><div class="stream-bubble me">算是提供思路了</div><div class="stream-bubble me">是的</div><div class="stream-bubble other">干啥了啊</div><div class="stream-bubble other">哈哈哈哈我学习的时候你都在工作..</div><div class="stream-bubble me">你舍友是不是也都多才多艺</div><div class="stream-bubble other">哈哈哈哈哈</div><div class="stream-bubble other">哈哈哈其实我也觉着不太好</div><div class="stream-bubble other">哈哈哈那也好</div><div class="stream-bubble me">我只能在网上重拳出击</div><div class="stream-bubble me">[表情包]</div></div>
+                    <div class="stream-col down"><div class="stream-bubble me">[表情包]</div><div class="stream-bubble me">只能这样了</div><div class="stream-bubble other">嗯呢</div><div class="stream-bubble other">哈哈哈</div><div class="stream-bubble other">现在好多了</div><div class="stream-bubble other">现在好多了</div><div class="stream-bubble other">吃饭了没呢</div><div class="stream-bubble other">然后摸了会琴</div><div class="stream-bubble me">当然啦</div><div class="stream-bubble me">[表情包]</div><div class="stream-bubble me">真好~(¯▽¯~)~</div><div class="stream-bubble me">然后就堵塞了</div></div>
+                    <div class="stream-col up"><div class="stream-bubble other">哈哈哈哈我学习的时候你都在工作..</div><div class="stream-bubble me">我现在是已经摆了</div><div class="stream-bubble other">哈哈哈哈抓耳挠腮了</div><div class="stream-bubble me">话说我自己一个人呆久了，回到家..</div><div class="stream-bubble other">没有呢</div><div class="stream-bubble me">我妈天天旁敲侧击，让我找对象</div><div class="stream-bubble me">[表情包]</div><div class="stream-bubble me">在这方面确实也没什么经验，而且..</div><div class="stream-bubble me">不知道她急啥</div><div class="stream-bubble other">对的</div><div class="stream-bubble me">但是我会一直记住鸽鸽</div><div class="stream-bubble me">话说我自己一个人呆久了，回到家..</div></div>
+                </div>
+                <div class="naked-data">
+                    <div class="sub-text">LONGEST STREAK</div>
+                    <div style="font-size: 1.2rem;">停不下来</div>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">在 2024-01-03 这一天</div>
+                    <div class="naked-big">161</div>
+                    <div style="font-size: 1.1rem; opacity: 0.9;">个来回，根本不想结束</div>
+                </div>
+            </div>
+
+            <!-- 8. 主动性 -->
+            <div class="section bg-autumn">
+                <div class="ripple-container">
+                    <div class="ripple-center">Z (左)</div>
+                    <div class="ripple-circle" style="animation-delay: 0s;"></div><div class="ripple-circle" style="animation-delay: 1s;"></div><div class="ripple-circle" style="animation-delay: 2s;"></div><div class="ripple-circle" style="animation-delay: 3s;"></div>
+                    <div class="ripple-word" style="--end-top: 26%; --end-left: 51%; animation-delay: 0.8s;">早上好</div><div class="ripple-word" style="--end-top: 86%; --end-left: 89%; animation-delay: 1.6s;">晚上</div><div class="ripple-word" style="--end-top: 37%; --end-left: 83%; animation-delay: 2.4000000000000004s;">晚安</div><div class="ripple-word" style="--end-top: 27%; --end-left: 55%; animation-delay: 3.2s;">中午</div><div class="ripple-word" style="--end-top: 16%; --end-left: 71%; animation-delay: 4.0s;">玫瑰</div>
+                </div>
+                <div class="glass-card" style="margin-top: 250px;">
+                    <div class="sub-text">INITIATOR</div>
+                    <h2>话题开启者</h2>
+                    <p>发起了 52% 的新话题</p>
+                    <p style="font-size: 0.85rem; margin-top: 10px; opacity: 0.8;">谢谢你，总是打破沉默</p>
+                </div>
+            </div>
+
+            <!-- 9. 日升月落 -->
+            <div class="section bg-routine-v35">
+                <div class="noise-overlay"></div>
+                <!-- 早安块 -->
+                <div class="routine-block">
+                    <div class="sun-glow"></div>
+                    <div class="routine-time">06:55</div>
+                    <div class="routine-label">平均早安时刻</div>
+                </div>
+
+                <!-- 光柱 -->
+                <div class="light-beam-container">
+                    <div class="light-beam"></div>
+                    <div class="beam-capsule">跨越 15 小时的问候</div>
+                </div>
+
+                <!-- 晚安块 -->
+                <div class="routine-block">
+                    <div class="routine-label">平均晚安时刻</div>
+                    <div class="routine-time">22:34</div>
+                    <div class="moon-glow"></div>
+                </div>
+            </div>
+
+            <!-- 10. 角色分工 (Soul Gravity) -->
+            <div class="section bg-roles-v37">
+                <div class="noise-overlay-roles"></div>
+                <div class="nebula-container">
+                    <div class="nebula-orb nebula-cyan"></div>
+                    <div class="nebula-orb nebula-crimson"></div>
+                </div>
+                <div class="soul-content-layer">
+                    <div class="soul-row">
+                        <div class="soul-item" style="transform: translateY(-20px);">
+                            <div class="soul-avatar">Z</div>
+                            <div class="soul-title">情报投递员</div>
+                            <div class="soul-num">98</div>
+                            <div class="soul-desc">探索 / 分享 / 链接</div>
+                        </div>
+                    </div>
+                    <div class="soul-row">
+                        <div class="soul-item" style="margin-left: auto; margin-right: 10%; transform: translateY(20px);">
+                            <div class="soul-avatar">Y</div>
+                            <div class="soul-title">情绪共鸣者</div>
+                            <div class="soul-num">1963</div>
+                            <div class="soul-desc">回应 / 温暖 / 大笑</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="soul-footer">
+                    <div class="typewriter-text">一个负责将世界的精彩搬进聊天框，一个负责用温暖接住每一个梗</div>
+                </div>
+            </div>
+           <div class="section bg-gravity-v38">
+                <div class="section-header light">
+                    <div class="section-sub">RESONANCE</div>
+                    同频共振
+                </div>
+
+                <div class="static-orbit" style="width: 300px; height: 300px; opacity: 0.05;"></div>
+                <div class="static-orbit" style="width: 500px; height: 500px; opacity: 0.08;"></div>
+                <div class="static-orbit" style="width: 700px; height: 700px; opacity: 0.05; border-style: solid;"></div>
+
+                <div class="reactor-container">
+                    <div class="reactor-core">
+                        <div class="reactor-num">27</div>
+                        
+                    </div>
+                    <div class="reactor-ring ring-1"></div>
+                    <div class="reactor-ring ring-2"></div>
+                    <div class="reactor-ring ring-3"></div>
+                </div>
+
+                <div class="msg-orbit-layer">
+                    
+                    <div class="orbit-track" 
+                         style="--r: 371; 
+                                --dur: 37.712930415867454s; 
+                                --del: -11.554020833846337s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1174602841757584;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 221; 
+                                --dur: 47.71004836112638s; 
+                                --del: -9.348849542618183s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.900044652899649;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 308; 
+                                --dur: 25.016727417811243s; 
+                                --del: -4.414615759538762s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.144985806231871;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 343; 
+                                --dur: 33.75785643266994s; 
+                                --del: -7.643727942524663s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.9216969518670342;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 335; 
+                                --dur: 40.757417199177794s; 
+                                --del: -23.119327609948904s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.8343775054587628;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 386; 
+                                --dur: 40.85521987238279s; 
+                                --del: -39.062492237737644s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1427935450335511;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 253; 
+                                --dur: 58.03861816501443s; 
+                                --del: -4.175497345045031s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1114888776466776;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 172; 
+                                --dur: 43.05126864607625s; 
+                                --del: -35.719079822190125s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.9803871352263542;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 159; 
+                                --dur: 59.57258221950653s; 
+                                --del: -38.361599765752985s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.094538075261711;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 357; 
+                                --dur: 34.52631567423512s; 
+                                --del: -41.830616968485614s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1808274203251439;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 148; 
+                                --dur: 34.82041587576049s; 
+                                --del: -24.416177943028245s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.9391762870131448;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 181; 
+                                --dur: 21.35607209958899s; 
+                                --del: -44.74732254029236s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1556973169063407;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 329; 
+                                --dur: 44.60788357233562s; 
+                                --del: -45.62212833948571s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.8460797178548167;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 223; 
+                                --dur: 29.616245318567024s; 
+                                --del: -6.66897685784857s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.185880479633867;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 165; 
+                                --dur: 46.976889836577826s; 
+                                --del: -18.63982380926143s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1589743321510904;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 330; 
+                                --dur: 21.501399529228337s; 
+                                --del: -57.994419181010166s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.8966735853011149;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 316; 
+                                --dur: 21.433066230684027s; 
+                                --del: -43.97616547426304s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.8522996208035043;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 310; 
+                                --dur: 55.41477927575986s; 
+                                --del: -2.462067942880836s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.0273004015104787;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 300; 
+                                --dur: 31.8023612385999s; 
+                                --del: -17.68877913715601s;
+                                --dir-css: reverse;">
+
+                        <div class="orbit-item"
+                             style="--s: 1.1329078672951651;
+                                    --counter-dir-css: normal;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="orbit-track" 
+                         style="--r: 319; 
+                                --dur: 50.4557875820822s; 
+                                --del: -39.11914042132169s;
+                                --dir-css: normal;">
+
+                        <div class="orbit-item"
+                             style="--s: 0.9760066451977054;
+                                    --counter-dir-css: reverse;">
+
+                            
+                                <div class="icon-cam">📷</div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="gravity-footer">
+                    2024.10.02 11:42 · 这一刻，我们的灵魂最拥挤<br>
+                    <span style="font-size: 0.7rem; opacity: 0.6; display: block; margin-top: 5px;">单次消息密度最大</span>
+                </div>
+            </div>
+
+            <!-- 12. 话题版图 -->
+            <div class="section bg-topics">
+                <div class="section-header dark">
+                    <div class="section-sub">我们最常聊的话题是</div>
+                    话题宇宙
+                </div>
+                <div class="liquid-container">
+                    
+                    <div class="liquid-blob lb-1">
+                        <div class="lb-name">生活</div>
+                        <div class="lb-kws">睡觉/吃饭/今天</div>
+                    </div>
+                    
+                    <div class="liquid-blob lb-2">
+                        <div class="lb-name">工作</div>
+                        <div class="lb-kws">一会/下班/上班</div>
+                    </div>
+                    
+                    <div class="liquid-blob lb-3">
+                        <div class="lb-name">娱乐</div>
+                        <div class="lb-kws">偷笑/破涕为笑/今天</div>
+                    </div>
+                    
+                    <div class="liquid-blob lb-4">
+                        <div class="lb-name">情感</div>
+                        <div class="lb-kws">不想/哈哈哈/现在</div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- 13. 封底 (黎明破晓) -->
+            <div class="section bg-dawn">
+                <div class="dawn-glow"></div>
+                <div class="dawn-particles">
+                    
+                    <div class="d-particle" 
+                         style="--l: 35%; 
+                                --dur: 13s; 
+                                --del: 4s;
+                                --s: 5px;
+                                --o: 0.8;
+                                --sway: 29;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 49%; 
+                                --dur: 22s; 
+                                --del: 7s;
+                                --s: 3px;
+                                --o: 0.4;
+                                --sway: -20;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 71%; 
+                                --dur: 23s; 
+                                --del: 1s;
+                                --s: 3px;
+                                --o: 0.8;
+                                --sway: -20;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 36%; 
+                                --dur: 16s; 
+                                --del: 8s;
+                                --s: 4px;
+                                --o: 0.8;
+                                --sway: -4;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 82%; 
+                                --dur: 13s; 
+                                --del: 7s;
+                                --s: 4px;
+                                --o: 0.5;
+                                --sway: -7;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 49%; 
+                                --dur: 17s; 
+                                --del: 2s;
+                                --s: 5px;
+                                --o: 0.7;
+                                --sway: -25;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 49%; 
+                                --dur: 16s; 
+                                --del: 1s;
+                                --s: 4px;
+                                --o: 0.8;
+                                --sway: 1;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 90%; 
+                                --dur: 13s; 
+                                --del: 1s;
+                                --s: 4px;
+                                --o: 0.7;
+                                --sway: 4;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 91%; 
+                                --dur: 13s; 
+                                --del: 6s;
+                                --s: 5px;
+                                --o: 0.8;
+                                --sway: 26;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 53%; 
+                                --dur: 19s; 
+                                --del: 3s;
+                                --s: 3px;
+                                --o: 0.6;
+                                --sway: 15;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 41%; 
+                                --dur: 18s; 
+                                --del: 9s;
+                                --s: 4px;
+                                --o: 0.5;
+                                --sway: 26;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 47%; 
+                                --dur: 24s; 
+                                --del: 1s;
+                                --s: 5px;
+                                --o: 0.4;
+                                --sway: 29;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 8%; 
+                                --dur: 20s; 
+                                --del: 0s;
+                                --s: 5px;
+                                --o: 0.4;
+                                --sway: -30;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 69%; 
+                                --dur: 18s; 
+                                --del: 2s;
+                                --s: 4px;
+                                --o: 0.6;
+                                --sway: 20;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 88%; 
+                                --dur: 13s; 
+                                --del: 5s;
+                                --s: 3px;
+                                --o: 0.5;
+                                --sway: 0;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 71%; 
+                                --dur: 14s; 
+                                --del: 5s;
+                                --s: 3px;
+                                --o: 0.7;
+                                --sway: 10;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 61%; 
+                                --dur: 22s; 
+                                --del: 7s;
+                                --s: 5px;
+                                --o: 0.6;
+                                --sway: 0;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 8%; 
+                                --dur: 20s; 
+                                --del: 6s;
+                                --s: 5px;
+                                --o: 0.8;
+                                --sway: -19;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 91%; 
+                                --dur: 22s; 
+                                --del: 2s;
+                                --s: 3px;
+                                --o: 0.4;
+                                --sway: 0;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 50%; 
+                                --dur: 24s; 
+                                --del: 1s;
+                                --s: 4px;
+                                --o: 0.8;
+                                --sway: -18;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 27%; 
+                                --dur: 18s; 
+                                --del: 6s;
+                                --s: 3px;
+                                --o: 0.7;
+                                --sway: -29;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 91%; 
+                                --dur: 19s; 
+                                --del: 1s;
+                                --s: 4px;
+                                --o: 0.7;
+                                --sway: 0;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 21%; 
+                                --dur: 20s; 
+                                --del: 8s;
+                                --s: 3px;
+                                --o: 0.6;
+                                --sway: 8;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 81%; 
+                                --dur: 22s; 
+                                --del: 8s;
+                                --s: 5px;
+                                --o: 0.6;
+                                --sway: -11;">
+                    </div>
+                    
+                    <div class="d-particle" 
+                         style="--l: 35%; 
+                                --dur: 23s; 
+                                --del: 4s;
+                                --s: 3px;
+                                --o: 0.4;
+                                --sway: 10;">
+                    </div>
+                    
+                </div>
+                <div class="dawn-content">
+                
+                    <div class="dawn-text">
+                        <span class="dawn-highlight">2026，祝一切都好! 新年快乐!</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const bubbles = document.querySelectorAll('.op-bubble');
+                const coreGlow = document.getElementById('core-glow');
+                const coverContent = document.getElementById('cover-content');
+                const openingStage = document.getElementById('opening-stage');
+
+                bubbles.forEach(b => {
+                    const sway = (Math.random() - 0.5) * 50 + 'px';
+                    b.style.setProperty('--sway', sway);
+                    b.classList.add('surge');
+                });
+
+                setTimeout(() => { coreGlow.classList.add('active'); }, 2000);
+                setTimeout(() => {
+                    coverContent.classList.add('explode');
+                    coreGlow.style.opacity = '0';
+                    setTimeout(() => { openingStage.style.display = 'none'; }, 1000);
+                }, 2800);
+            });
+        </script>
+    </body>
+    </html>
+    
